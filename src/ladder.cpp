@@ -7,41 +7,49 @@ void error(string word1, string word2, string msg) {
 }
 
 bool edit_distance_within(const string& str1, const string& str2, int d) {
-    // If lengths differ by more than d, edit distance must be greater than d
-    if (abs((int)str1.length() - (int)str2.length()) > d) {
+    // Quick length check
+    int len1 = str1.length();
+    int len2 = str2.length();
+    if (abs(len1 - len2) > d) {
         return false;
     }
-
-    // Dynamic programming matrix
-    vector<vector<int>> dp(str1.length() + 1, vector<int>(str2.length() + 1));
-
-    // Initialize first row and column
-    for (size_t i = 0; i <= str1.length(); i++) {
-        dp[i][0] = i;
+    
+    // If one string is empty, return true if other string's length <= d
+    if (len1 == 0) return len2 <= d;
+    if (len2 == 0) return len1 <= d;
+    
+    // Use smaller array to save memory
+    vector<int> prev(len2 + 1);
+    vector<int> curr(len2 + 1);
+    
+    // Initialize first row
+    for (int j = 0; j <= len2; j++) {
+        prev[j] = j;
     }
-    for (size_t j = 0; j <= str2.length(); j++) {
-        dp[0][j] = j;
-    }
-
+    
     // Fill the matrix
-    for (size_t i = 1; i <= str1.length(); i++) {
-        for (size_t j = 1; j <= str2.length(); j++) {
+    for (int i = 1; i <= len1; i++) {
+        curr[0] = i;
+        
+        for (int j = 1; j <= len2; j++) {
             if (tolower(str1[i-1]) == tolower(str2[j-1])) {
-                dp[i][j] = dp[i-1][j-1];
+                curr[j] = prev[j-1];
             } else {
-                dp[i][j] = 1 + min({dp[i-1][j],      // deletion
-                                   dp[i][j-1],        // insertion
-                                   dp[i-1][j-1]});    // substitution
-            }
-            
-            // Early exit if we know the edit distance will be > d
-            if (i == j && dp[i][j] > d) {
-                return false;
+                curr[j] = 1 + min({prev[j],     // deletion
+                                  curr[j-1],     // insertion
+                                  prev[j-1]});   // substitution
             }
         }
+        
+        // Early exit if we can't get edit distance <= d
+        if (*min_element(curr.begin(), curr.end()) > d) {
+            return false;
+        }
+        
+        prev = curr;
     }
-
-    return dp[str1.length()][str2.length()] <= d;
+    
+    return curr[len2] <= d;
 }
 
 bool is_adjacent(const string& word1, const string& word2) {
@@ -71,18 +79,6 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
     transform(start.begin(), start.end(), start.begin(), ::tolower);
     transform(end.begin(), end.end(), end.begin(), ::tolower);
     
-    // Check if words are the same
-    if (start == end) {
-        error(start, end, "Start and end words must be different");
-        return vector<string>();
-    }
-    
-    // Check if end word is in dictionary
-    if (word_list.find(end) == word_list.end()) {
-        error(start, end, "End word not found in dictionary");
-        return vector<string>();
-    }
-    
     // Initialize queue with start word
     queue<vector<string>> ladder_queue;
     ladder_queue.push({start});
@@ -91,38 +87,32 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
     set<string> visited;
     visited.insert(start);
     
-    // Limit the search depth to avoid infinite loops
-    const int MAX_DEPTH = 50;  // Reasonable limit for word ladders
-    
     // BFS
     while (!ladder_queue.empty()) {
         vector<string> current_ladder = ladder_queue.front();
         ladder_queue.pop();
         
-        // Check if we've exceeded maximum depth
-        if (current_ladder.size() > MAX_DEPTH) {
-            continue;
-        }
-        
         string last_word = current_ladder.back();
         
         // Check each word in dictionary
         for (const string& word : word_list) {
-            if (visited.find(word) == visited.end() && is_adjacent(last_word, word)) {
-                vector<string> new_ladder = current_ladder;
-                new_ladder.push_back(word);
-                
-                if (word == end) {
-                    return new_ladder;
-                }
-                
-                visited.insert(word);
-                ladder_queue.push(new_ladder);
+            // Skip if word already visited or not adjacent
+            if (visited.find(word) != visited.end() || !is_adjacent(last_word, word)) {
+                continue;
             }
+            
+            vector<string> new_ladder = current_ladder;
+            new_ladder.push_back(word);
+            
+            if (word == end) {
+                return new_ladder;
+            }
+            
+            visited.insert(word);
+            ladder_queue.push(new_ladder);
         }
     }
     
-    // No ladder found
     return vector<string>();
 }
 
@@ -146,9 +136,17 @@ void verify_word_ladder() {
     
     cout << "Enter start word: ";
     cin >> start_word;
+    if (start_word.empty()) {
+        cout << "Error: Start word cannot be empty" << endl;
+        return;
+    }
     
     cout << "Enter end word: ";
     cin >> end_word;
+    if (end_word.empty()) {
+        cout << "Error: End word cannot be empty" << endl;
+        return;
+    }
     
     // Convert both words to lowercase for comparison
     transform(start_word.begin(), start_word.end(), start_word.begin(), ::tolower);
@@ -164,6 +162,10 @@ void verify_word_ladder() {
     set<string> dictionary;
     try {
         load_words(dictionary, "words.txt");
+        if (dictionary.empty()) {
+            cout << "Error: Dictionary is empty" << endl;
+            return;
+        }
     } catch (const runtime_error& e) {
         cout << "Error: " << e.what() << endl;
         return;
