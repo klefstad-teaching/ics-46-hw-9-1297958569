@@ -73,11 +73,13 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
     
     // Check if words are the same
     if (start == end) {
+        error(start, end, "Start and end words must be different");
         return vector<string>();
     }
     
     // Check if end word is in dictionary
     if (word_list.find(end) == word_list.end()) {
+        error(start, end, "End word not found in dictionary");
         return vector<string>();
     }
     
@@ -89,10 +91,18 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
     set<string> visited;
     visited.insert(start);
     
+    // Limit the search depth to avoid infinite loops
+    const int MAX_DEPTH = 50;  // Reasonable limit for word ladders
+    
     // BFS
     while (!ladder_queue.empty()) {
         vector<string> current_ladder = ladder_queue.front();
         ladder_queue.pop();
+        
+        // Check if we've exceeded maximum depth
+        if (current_ladder.size() > MAX_DEPTH) {
+            continue;
+        }
         
         string last_word = current_ladder.back();
         
