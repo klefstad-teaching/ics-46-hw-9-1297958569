@@ -150,11 +150,17 @@ void verify_word_ladder() {
     cout << "Enter end word: ";
     cin >> end_word;
     
+    // Convert both words to lowercase for comparison
+    transform(start_word.begin(), start_word.end(), start_word.begin(), ::tolower);
+    transform(end_word.begin(), end_word.end(), end_word.begin(), ::tolower);
+    
+    // Check if words are the same
     if (start_word == end_word) {
         error(start_word, end_word, "Start and end words must be different");
         return;
     }
     
+    // Load dictionary
     set<string> dictionary;
     try {
         load_words(dictionary, "words.txt");
@@ -163,6 +169,25 @@ void verify_word_ladder() {
         return;
     }
     
+    // Verify end word is in dictionary
+    if (dictionary.find(end_word) == dictionary.end()) {
+        error(start_word, end_word, "End word not found in dictionary");
+        return;
+    }
+    
+    // Generate and print ladder
     vector<string> ladder = generate_word_ladder(start_word, end_word, dictionary);
-    print_word_ladder(ladder);
+    
+    // Print result
+    if (ladder.empty()) {
+        cout << "No word ladder found." << endl;
+    } else {
+        for (size_t i = 0; i < ladder.size(); i++) {
+            cout << ladder[i];
+            if (i < ladder.size() - 1) {
+                cout << " -> ";
+            }
+        }
+        cout << endl;
+    }
 }
