@@ -125,9 +125,7 @@ void print_word_ladder(const vector<string>& ladder) {
     cout << "Word ladder found: ";
     for (size_t i = 0; i < ladder.size(); i++) {
         cout << ladder[i];
-        if (i < ladder.size() - 1) {
-            cout << " ";  // Just a space between words, no arrows
-        }
+        cout << " ";  // Add space after every word, including the last one
     }
     cout << endl;
 }
