@@ -1,4 +1,32 @@
-#include "dijkstras.h"
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <algorithm>
+#include <limits>
+
+using namespace std;
+
+const int INF = numeric_limits<int>::max();
+
+struct Edge {
+    int dst;
+    int weight;
+};
+
+struct Graph {
+    int numVertices;
+    vector<vector<Edge>> adjList;
+    
+    // Non-const operator[] (already present)
+    vector<Edge>& operator[](int i) { 
+        return adjList[i]; 
+    }
+
+    // Const version of operator[]
+    const vector<Edge>& operator[](int i) const { 
+        return adjList[i]; 
+    }
+};
 
 struct Node {
     int vertex;
@@ -68,15 +96,20 @@ vector<int> extract_shortest_path(const vector<int>& distances, const vector<int
 }
 
 void print_path(const vector<int>& path, int total) {
+    // Print total cost first
+    cout << "Total cost is " << total << "\n";
+    
     if (path.empty()) {
         cout << "No path exists\n";
         return;
     }
     
-    // Print path without "Path:" prefix
+    // Print path correctly formatted
     for (size_t i = 0; i < path.size(); i++) {
         cout << path[i];
-        cout << " ";  // Always print a space after each number, including the last one
+        if (i < path.size() - 1) {
+            cout << " ";
+        }
     }
-    cout << "\nTotal cost is " << total << "\n";
+    cout << "\n";
 }
