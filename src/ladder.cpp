@@ -53,6 +53,11 @@ bool edit_distance_within(const string& str1, const string& str2, int d) {
 }
 
 bool is_adjacent(const string& word1, const string& word2) {
+    // Quick length check before doing edit distance
+    int len_diff = abs((int)word1.length() - (int)word2.length());
+    if (len_diff > 1) {
+        return false;
+    }
     return edit_distance_within(word1, word2, 1);
 }
 
@@ -87,10 +92,17 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
     set<string> visited;
     visited.insert(start);
     
+    const int MAX_LADDER_LENGTH = 100;  // Reasonable limit to prevent infinite loops
+    
     // BFS
     while (!ladder_queue.empty()) {
         vector<string> current_ladder = ladder_queue.front();
         ladder_queue.pop();
+        
+        // Skip if ladder is too long
+        if (current_ladder.size() >= MAX_LADDER_LENGTH) {
+            continue;
+        }
         
         string last_word = current_ladder.back();
         
@@ -178,17 +190,5 @@ void verify_word_ladder() {
     
     // Generate and print ladder
     vector<string> ladder = generate_word_ladder(start_word, end_word, dictionary);
-    
-    // Print result
-    if (ladder.empty()) {
-        cout << "No word ladder found." << endl;
-    } else {
-        for (size_t i = 0; i < ladder.size(); i++) {
-            cout << ladder[i];
-            if (i < ladder.size() - 1) {
-                cout << " -> ";
-            }
-        }
-        cout << endl;
-    }
+    print_word_ladder(ladder);  // Use the print_word_ladder function instead of custom printing
 }
