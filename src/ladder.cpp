@@ -99,22 +99,24 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
         ladder_queue.pop();
         
         string last_word = current_ladder.back();
+        vector<string> neighbors = generate_neighbors(last_word);
         
-        // First check if any word in dictionary is adjacent
-        for (const string& word : word_list) {
-            if (visited.find(word) != visited.end()) continue;
+        for (const string& neighbor : neighbors) {
+            // Skip if we've seen this word before
+            if (visited.count(neighbor)) continue;
             
-            if (is_adjacent(last_word, word)) {
-                vector<string> new_ladder = current_ladder;
-                new_ladder.push_back(word);
-                
-                if (word == end) {
-                    return new_ladder;
-                }
-                
-                visited.insert(word);
-                ladder_queue.push(new_ladder);
+            // For non-start words, they must be in dictionary
+            if (neighbor != start && word_list.find(neighbor) == word_list.end()) continue;
+            
+            vector<string> new_ladder = current_ladder;
+            new_ladder.push_back(neighbor);
+            
+            if (neighbor == end) {
+                return new_ladder;
             }
+            
+            visited.insert(neighbor);
+            ladder_queue.push(new_ladder);
         }
     }
     
