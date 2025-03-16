@@ -17,12 +17,10 @@ struct Graph {
     int numVertices;
     vector<vector<Edge>> adjList;
     
-    // Non-const operator[] (already present)
     vector<Edge>& operator[](int i) { 
         return adjList[i]; 
     }
 
-    // Const version of operator[]
     const vector<Edge>& operator[](int i) const { 
         return adjList[i]; 
     }
@@ -96,20 +94,22 @@ vector<int> extract_shortest_path(const vector<int>& distances, const vector<int
 }
 
 void print_path(const vector<int>& path, int total) {
-    // Print total cost first
+    if (!path.empty()) {
+        // Print the path first
+        for (size_t i = 0; i < path.size(); i++) {
+            cout << path[i];
+            if (i < path.size() - 1) {
+                cout << " ";
+            }
+        }
+        cout << " \n";  // Space before newline to match expected output
+    }
+
+    // Print total cost after the path
     cout << "Total cost is " << total << "\n";
-    
+
+    // If path is empty, indicate no path exists
     if (path.empty()) {
         cout << "No path exists\n";
-        return;
     }
-    
-    // Print path correctly formatted
-    for (size_t i = 0; i < path.size(); i++) {
-        cout << path[i];
-        if (i < path.size() - 1) {
-            cout << " ";
-        }
-    }
-    cout << "\n";
 }
