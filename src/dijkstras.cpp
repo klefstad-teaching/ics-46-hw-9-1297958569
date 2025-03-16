@@ -103,13 +103,11 @@ void print_path(const vector<int>& path, int total) {
             }
         }
         cout << " \n";  // Space before newline to match expected output
-    }
 
-    // Print total cost after the path
-    cout << "Total cost is " << total << "\n";
-
-    // If path is empty, indicate no path exists
-    if (path.empty()) {
+        // Print total cost after the path
+        cout << "Total cost is " << total << "\n";
+    } else {
+        // Only print "No path exists" when the path is completely empty
         cout << "No path exists\n";
     }
 }
