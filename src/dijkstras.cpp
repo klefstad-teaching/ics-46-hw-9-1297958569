@@ -83,25 +83,20 @@ vector<int> extract_shortest_path(const vector<int>& distances, const vector<int
 
 void print_path(const vector<int>& path, int total) {
     if (total == INF) {
-        // Only print "No path exists" when no valid cost is found
         cout << "No path exists\n";
         return;
     }
 
     if (!path.empty()) {
-        // Print the path first
         for (size_t i = 0; i < path.size(); i++) {
             cout << path[i];
             if (i < path.size() - 1) {
                 cout << " ";
             }
         }
-        cout << " \n";  // Space before newline to match expected output
-    } else {
-        // If there's no path printed but a valid cost exists, add a newline before "Total cost"
-        cout << "\n";
+        cout << "\n ";  // Ensure correct newline placement
     }
 
-    // Print total cost
+    // Print total cost without extra newlines
     cout << "Total cost is " << total << "\n";
 }
