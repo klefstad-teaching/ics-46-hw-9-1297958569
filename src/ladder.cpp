@@ -114,50 +114,43 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
     
     if (start == end) return {};
     
-    // End word must be in dictionary
     if (word_list.find(end) == word_list.end()) {
         return {};
     }
     
-    // BFS queue and visited set
     queue<vector<string>> ladder_queue;
     set<string> visited;
     
-    // Initialize with start word
     ladder_queue.push({start});
     visited.insert(start);
     
-    // Limit search depth to prevent infinite loops
-    const int MAX_DEPTH = 50;
+    const int MAX_DEPTH = 50;  // Prevent infinite loops
     
     while (!ladder_queue.empty()) {
         vector<string> current_ladder = ladder_queue.front();
         ladder_queue.pop();
         
-        // Skip if ladder is too long
-        if (current_ladder.size() >= MAX_DEPTH) {
-            continue;
-        }
+        if (current_ladder.size() >= MAX_DEPTH) continue;
         
         string last_word = current_ladder.back();
+        vector<string> neighbors = generate_neighbors(last_word);
         
-        // Try all possible one-letter changes
-        for (const string& word : word_list) {
-            // Skip if already visited
-            if (visited.count(word)) continue;
+        for (const string& neighbor : neighbors) {
+            // Skip if we've seen this word before
+            if (visited.count(neighbor)) continue;
             
-            // Check if words are adjacent (one letter different)
-            if (is_adjacent(last_word, word)) {
-                vector<string> new_ladder = current_ladder;
-                new_ladder.push_back(word);
-                
-                if (word == end) {
-                    return new_ladder;  // Found the end word
-                }
-                
-                visited.insert(word);
-                ladder_queue.push(new_ladder);
+            // For non-start words, they must be in dictionary
+            if (neighbor != start && word_list.find(neighbor) == word_list.end()) continue;
+            
+            vector<string> new_ladder = current_ladder;
+            new_ladder.push_back(neighbor);
+            
+            if (neighbor == end) {
+                return new_ladder;
             }
+            
+            visited.insert(neighbor);
+            ladder_queue.push(new_ladder);
         }
     }
     
@@ -174,7 +167,7 @@ void print_word_ladder(const vector<string>& ladder) {
     for (const auto& word : ladder) {
         cout << " " << word;
     }
-    cout << " \n";
+    cout << " \n";  // Space before newline to match expected output
 }
 
 void verify_word_ladder() {
