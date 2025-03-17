@@ -94,12 +94,9 @@ void print_path(const vector<int>& path, int total) {
     }
 
     if (!path.empty()) {
-        // Print the path first
+        // Print the path first, ensuring a space before newline
         for (size_t i = 0; i < path.size(); i++) {
-            cout << path[i];
-            if (i < path.size() - 1) {
-                cout << " ";
-            }
+            cout << path[i] << " ";  // Always add a space after each number
         }
         cout << "\n";  // Ensure newline after path
     }
