@@ -1,7 +1,4 @@
 #include "dijkstras.h"
-#include <set>
-#include <queue>
-#include <algorithm>
 
 struct Node {
     int vertex;
@@ -20,10 +17,10 @@ vector<int> dijkstra_shortest_path(const Graph& G, int source, vector<int>& prev
     previous.resize(n, -1);
     vector<bool> visited(n, false);
     
-    // 顶点的优先级队列
+    // Priority queue for vertices
     priority_queue<Node, vector<Node>, greater<Node>> pq;
     
-    // 初始化源
+    // Initialize source
     distances[source] = 0;
     pq.push(Node(source, 0));
     
@@ -35,7 +32,7 @@ vector<int> dijkstra_shortest_path(const Graph& G, int source, vector<int>& prev
         
         visited[u] = true;
         
-        // 检查所有相邻顶点
+        // Check all adjacent vertices
         for (const Edge& edge : G[u]) {
             int v = edge.dst;
             int weight = edge.weight;
@@ -56,38 +53,33 @@ vector<int> extract_shortest_path(const vector<int>& distances, const vector<int
     if (distances[destination] == INF) {
         return vector<int>();
     }
-
+    
     vector<int> path;
     for (int v = destination; v != -1; v = previous[v]) {
         path.push_back(v);
     }
-
+    
     reverse(path.begin(), path.end());
     return path;
 }
 
-
 void print_path(const vector<int>& path, int total) {
     if (total == INF) {
-        // 仅在未找到有效成本时打印“不存在路径”
         cout << "No path exists\n";
         return;
     }
-
+    
     if (!path.empty()) {
-        // 首先打印路径
         for (size_t i = 0; i < path.size(); i++) {
             cout << path[i];
             if (i < path.size() - 1) {
                 cout << " ";
             }
         }
-        cout << " \n";  
+        cout << " \n";
     } else {
-    
         cout << "\n";
     }
-
-    // 打印总成本
+    
     cout << "Total cost is " << total << "\n";
 }
