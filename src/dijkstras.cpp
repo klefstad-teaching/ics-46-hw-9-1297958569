@@ -50,20 +50,25 @@ vector<int> dijkstra_shortest_path(const Graph& G, int source, vector<int>& prev
 }
 
 vector<int> extract_shortest_path(const vector<int>& distances, const vector<int>& previous, int destination) {
-    vector<int> path;
-    
-    // If no path exists to destination
+    // If there's no path to destination (distance is INF), return empty path
     if (distances[destination] == INF) {
-        return path;  // Return empty path
+        return vector<int>();
     }
     
-    // Build path from destination back to source
-    for (int v = destination; v != -1; v = previous[v]) {
-        path.push_back(v);
+    // Create vector to store the path
+    vector<int> path;
+    int current = destination;
+    
+    // Keep going backwards from destination until we hit source (where previous[current] == -1)
+    while (current != -1) {
+        path.push_back(current);  // Add current vertex to path
+        current = previous[current];  // Move to the previous vertex
     }
     
-    // Reverse to get path from source to destination
+    // Since we built the path backwards (from destination to source),
+    // we need to reverse it to get source to destination
     reverse(path.begin(), path.end());
+    
     return path;
 }
 
