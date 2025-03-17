@@ -53,50 +53,60 @@ vector<int> dijkstra_shortest_path(const Graph& G, int source, vector<int>& prev
 }
 
 vector<int> extract_shortest_path(const vector<int>& distances, const vector<int>& previous, int destination) {
+    // Check for invalid destination
     if (destination < 0 || destination >= distances.size()) {
-        return {};
+        return vector<int>();
     }
     
+    // Check for unreachable destination
     if (distances[destination] == INF) {
-        return {};
+        return vector<int>();
     }
 
     vector<int> path;
+    // Check for cycles or invalid previous pointers
     set<int> visited;
     
     for (int v = destination; v != -1; v = previous[v]) {
-        if (visited.count(v)) return {};
+        // Check for cycles
+        if (visited.count(v)) {
+            return vector<int>();  // Cycle detected
+        }
         visited.insert(v);
+        
+        // Check for invalid previous index
+        if (v >= previous.size()) {
+            return vector<int>();
+        }
+        
         path.push_back(v);
     }
     
     reverse(path.begin(), path.end());
-
-    // Debug print statement
-    cout << "Extracted Path: ";
-    for (int v : path) cout << v << " ";
-    cout << endl;
-
     return path;
 }
 
-
 void print_path(const vector<int>& path, int total) {
     if (total == INF) {
+        // Only print "No path exists" when no valid cost is found
         cout << "No path exists\n";
         return;
     }
 
     if (!path.empty()) {
+        // Print the path first
         for (size_t i = 0; i < path.size(); i++) {
             cout << path[i];
             if (i < path.size() - 1) {
                 cout << " ";
             }
         }
-        cout << "\n ";  // Ensure correct newline placement
+        cout << " \n";  // Space before newline to match expected output
+    } else {
+        // If there's no path printed but a valid cost exists, add a newline before "Total cost"
+        cout << "\n";
     }
 
-    // Print total cost without extra newlines
+    // Print total cost
     cout << "Total cost is " << total << "\n";
 }
