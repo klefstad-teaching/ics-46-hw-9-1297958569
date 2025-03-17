@@ -101,7 +101,7 @@ void print_path(const vector<int>& path, int total) {
                 cout << " ";
             }
         }
-        cout << " \n";  // Ensure newline after path
+        cout << "\n";  // Ensure newline after path
     }
 
     // Print total cost on a new line
