@@ -53,38 +53,33 @@ vector<int> dijkstra_shortest_path(const Graph& G, int source, vector<int>& prev
 }
 
 vector<int> extract_shortest_path(const vector<int>& distances, const vector<int>& previous, int destination) {
-    // Check for invalid destination
     if (destination < 0 || destination >= distances.size()) {
-        return vector<int>();
+        return {};
     }
     
-    // Check for unreachable destination
     if (distances[destination] == INF) {
-        return vector<int>();
+        return {};
     }
 
     vector<int> path;
-    // Check for cycles or invalid previous pointers
     set<int> visited;
     
     for (int v = destination; v != -1; v = previous[v]) {
-        // Check for cycles
-        if (visited.count(v)) {
-            return vector<int>();  // Cycle detected
-        }
+        if (visited.count(v)) return {};
         visited.insert(v);
-        
-        // Check for invalid previous index
-        if (v >= previous.size()) {
-            return vector<int>();
-        }
-        
         path.push_back(v);
     }
     
     reverse(path.begin(), path.end());
+
+    // Debug print statement
+    cout << "Extracted Path: ";
+    for (int v : path) cout << v << " ";
+    cout << endl;
+
     return path;
 }
+
 
 void print_path(const vector<int>& path, int total) {
     if (total == INF) {
