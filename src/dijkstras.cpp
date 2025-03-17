@@ -56,12 +56,12 @@ vector<int> extract_shortest_path(const vector<int>& distances, const vector<int
         return path;
     }
     
-    // Build path from destination to source
+    // 构建从目标到源的路径
     for (int at = destination; at != -1 && distances[at] != 0; at = previous[at]) {
         path.push_back(at);
     }
     
-    // Add source vertex
+    // 添加源顶点
     for (size_t i = 0; i < distances.size(); i++) {
         if (distances[i] == 0) {
             path.push_back(i);

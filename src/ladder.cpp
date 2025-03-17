@@ -35,7 +35,7 @@ vector<string> generate_neighbors(const string& word) {
     vector<string> neighbors;
     const string letters = "abcdefghijklmnopqrstuvwxyz";
 
-    // Try changing each letter
+    // 尝试改变每个字母
     for (size_t i = 0; i < word.size(); ++i) {
         for (char c : letters) {
             if (c == word[i]) continue;
@@ -45,14 +45,14 @@ vector<string> generate_neighbors(const string& word) {
         }
     }
 
-    // Try inserting a letter
+    // 尝试插入一个字母
     for (size_t i = 0; i <= word.size(); ++i) {
         for (char c : letters) {
             neighbors.push_back(word.substr(0, i) + c + word.substr(i));
         }
     }
 
-    // Try deleting a letter
+    // 尝试删除一字母
     for (size_t i = 0; i < word.size(); ++i) {
         neighbors.push_back(word.substr(0, i) + word.substr(i + 1));
     }
@@ -68,10 +68,10 @@ void load_words(set<string>& word_list, const string& file_name) {
     
     string word;
     while (getline(file, word)) {
-        // Remove any trailing whitespace or newlines
+        // 删除所有尾随空格或换行符
         word.erase(word.find_last_not_of(" \n\r\t") + 1);
         if (!word.empty()) {
-            // Convert to lowercase
+            // 转换为小写
             transform(word.begin(), word.end(), word.begin(), ::tolower);
             word_list.insert(word);
         }
@@ -79,7 +79,7 @@ void load_words(set<string>& word_list, const string& file_name) {
 }
 
 vector<string> generate_word_ladder(const string& begin_word, const string& end_word, const set<string>& word_list) {
-    // Convert input words to lowercase for comparison
+    // 将输入的单词转换为小写以便进行比较
     string start = begin_word;
     string end = end_word;
     transform(start.begin(), start.end(), start.begin(), ::tolower);
@@ -91,7 +91,7 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
         return {};
     }
     
-    // Use priority queue to ensure shortest path
+    // 使用优先级队列确保最短路径
     auto compare = [](const vector<string>& a, const vector<string>& b) {
         if (a.size() != b.size()) {
             return a.size() > b.size();
@@ -105,7 +105,7 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
     ladder_queue.push({start});
     visited.insert(start);
     
-    const int MAX_DEPTH = 20;  // Prevent infinite loops
+    const int MAX_DEPTH = 20;
     
     while (!ladder_queue.empty()) {
         vector<string> current_ladder = ladder_queue.top();
@@ -119,7 +119,7 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
             return current_ladder;
         }
         
-        // Try changing one letter
+        // 尝试改变一个字母
         for (size_t i = 0; i < last_word.length(); i++) {
             string new_word = last_word;
             for (char c = 'a'; c <= 'z'; c++) {
@@ -133,7 +133,7 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
             }
         }
         
-        // Try inserting one letter
+        // 尝试插入一个字母
         for (size_t i = 0; i <= last_word.length(); i++) {
             for (char c = 'a'; c <= 'z'; c++) {
                 string new_word = last_word;
@@ -147,7 +147,7 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
             }
         }
         
-        // Try deleting one letter
+        // 尝试删除一个字母
         for (size_t i = 0; i < last_word.length(); i++) {
             string new_word = last_word;
             new_word.erase(i, 1);
@@ -160,7 +160,7 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
         }
     }
     
-    return {};  // No ladder found
+    return {}; 
 }
 
 void print_word_ladder(const vector<string>& ladder) {
@@ -173,7 +173,7 @@ void print_word_ladder(const vector<string>& ladder) {
     for (const auto& word : ladder) {
         cout << " " << word;
     }
-    cout << " \n";  // Space before newline to match expected output
+    cout << " \n";  // 换行符前的空格与预期输出相匹配
 }
 
 void verify_word_ladder() {
@@ -185,17 +185,17 @@ void verify_word_ladder() {
     cout << "Enter end word: ";
     cin >> end_word;
     
-    // Convert both words to lowercase for comparison
+    // 将两个单词都转换为小写以便进行比较
     transform(start_word.begin(), start_word.end(), start_word.begin(), ::tolower);
     transform(end_word.begin(), end_word.end(), end_word.begin(), ::tolower);
     
-    // Check if words are the same
+    // 检查单词是否相同
     if (start_word == end_word) {
         error(start_word, end_word, "Start and end words must be different");
         return;
     }
     
-    // Load dictionary
+    // 加载词典
     set<string> dictionary;
     try {
         load_words(dictionary, "words.txt");
@@ -204,13 +204,13 @@ void verify_word_ladder() {
         return;
     }
     
-    // Verify end word is in dictionary
+    // 验证结束词是否在词典中
     if (dictionary.find(end_word) == dictionary.end()) {
         error(start_word, end_word, "End word not found in dictionary");
         return;
     }
     
-    // Generate and print ladder
+    // 生成并打印梯子
     vector<string> ladder = generate_word_ladder(start_word, end_word, dictionary);
     print_word_ladder(ladder);
 }
