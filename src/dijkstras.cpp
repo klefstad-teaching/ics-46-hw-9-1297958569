@@ -101,12 +101,9 @@ void print_path(const vector<int>& path, int total) {
                 cout << " ";
             }
         }
-        cout << " \n";  // Space before newline to match expected output
-    } else {
-        // If there's no path printed but a valid cost exists, add a newline before "Total cost"
-        cout << "\n";
+        cout << " \n";  // Ensure newline after path
     }
 
-    // Print total cost
+    // Print total cost on a new line
     cout << "Total cost is " << total << "\n";
 }
