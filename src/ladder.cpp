@@ -106,41 +106,24 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
         if (current_ladder.size() >= MAX_DEPTH) continue;
         
         string last_word = current_ladder.back();
+        vector<string> neighbors = generate_neighbors(last_word);
         
-        // Try all dictionary words first
-        for (const string& dict_word : word_list) {
-            if (visited.count(dict_word)) continue;
+        for (const string& neighbor : neighbors) {
+            // Skip if we've seen this word before
+            if (visited.count(neighbor)) continue;
             
-            if (is_adjacent(last_word, dict_word)) {
-                vector<string> new_ladder = current_ladder;
-                new_ladder.push_back(dict_word);
-                
-                if (dict_word == end) {
-                    return new_ladder;
-                }
-                
-                visited.insert(dict_word);
-                ladder_queue.push(new_ladder);
+            // For non-start words, they must be in dictionary
+            if (neighbor != start && word_list.find(neighbor) == word_list.end()) continue;
+            
+            vector<string> new_ladder = current_ladder;
+            new_ladder.push_back(neighbor);
+            
+            if (neighbor == end) {
+                return new_ladder;
             }
-        }
-        
-        // If no dictionary words work, try generating neighbors
-        if (last_word != end) {
-            vector<string> neighbors = generate_neighbors(last_word);
-            for (const string& neighbor : neighbors) {
-                if (visited.count(neighbor)) continue;
-                if (neighbor != start && word_list.find(neighbor) == word_list.end()) continue;
-                
-                vector<string> new_ladder = current_ladder;
-                new_ladder.push_back(neighbor);
-                
-                if (neighbor == end) {
-                    return new_ladder;
-                }
-                
-                visited.insert(neighbor);
-                ladder_queue.push(new_ladder);
-            }
+            
+            visited.insert(neighbor);
+            ladder_queue.push(new_ladder);
         }
     }
     
