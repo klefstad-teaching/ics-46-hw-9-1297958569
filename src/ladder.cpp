@@ -97,28 +97,33 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
     ladder_queue.push({start});
     visited.insert(start);
     
+    const int MAX_DEPTH = 50;  // Prevent infinite loops
+    
     while (!ladder_queue.empty()) {
         vector<string> current_ladder = ladder_queue.front();
         ladder_queue.pop();
         
-        string last_word = current_ladder.back();
+        if (current_ladder.size() >= MAX_DEPTH) continue;
         
-        // Check each word in dictionary
-        for (const string& word : word_list) {
-            if (visited.count(word)) continue;
+        string last_word = current_ladder.back();
+        vector<string> neighbors = generate_neighbors(last_word);
+        
+        for (const string& neighbor : neighbors) {
+            // Skip if we've seen this word before
+            if (visited.count(neighbor)) continue;
             
-            // Check if words are adjacent
-            if (is_adjacent(last_word, word)) {
-                vector<string> new_ladder = current_ladder;
-                new_ladder.push_back(word);
-                
-                if (word == end) {
-                    return new_ladder;
-                }
-                
-                visited.insert(word);
-                ladder_queue.push(new_ladder);
+            // For non-start words, they must be in dictionary
+            if (neighbor != start && word_list.find(neighbor) == word_list.end()) continue;
+            
+            vector<string> new_ladder = current_ladder;
+            new_ladder.push_back(neighbor);
+            
+            if (neighbor == end) {
+                return new_ladder;
             }
+            
+            visited.insert(neighbor);
+            ladder_queue.push(new_ladder);
         }
     }
     
