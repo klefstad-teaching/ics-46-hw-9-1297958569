@@ -93,17 +93,20 @@ void print_path(const vector<int>& path, int total) {
         return;
     }
 
-    // Print the path first (if exists)
-    for (size_t i = 0; i < path.size(); i++) {
-        cout << path[i];
-        if (i < path.size() - 1) {
-            cout << " ";
+    if (!path.empty()) {
+        // Print the path first
+        for (size_t i = 0; i < path.size(); i++) {
+            cout << path[i];
+            if (i < path.size() - 1) {
+                cout << " ";
+            }
         }
+        cout << " \n";  // Space before newline to match expected output
+    } else {
+        // If there's no path printed but a valid cost exists, add a newline before "Total cost"
+        cout << "\n";
     }
-    
-    // Add space and newline after path (even if path is empty)
-    cout << " \n";
-    
+
     // Print total cost
     cout << "Total cost is " << total << "\n";
 }
