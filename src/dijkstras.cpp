@@ -1,30 +1,4 @@
-#include <iostream>
-#include <vector>
-#include <queue>
-#include <algorithm>
-#include <limits>
-
-using namespace std;
-
-const int INF = numeric_limits<int>::max();
-
-struct Edge {
-    int dst;
-    int weight;
-};
-
-struct Graph {
-    int numVertices;
-    vector<vector<Edge>> adjList;
-    
-    vector<Edge>& operator[](int i) { 
-        return adjList[i]; 
-    }
-
-    const vector<Edge>& operator[](int i) const { 
-        return adjList[i]; 
-    }
-};
+#include "dijkstras.h"
 
 struct Node {
     int vertex;
@@ -117,4 +91,3 @@ void print_path(const vector<int>& path, int total) {
     // Print total cost
     cout << "Total cost is " << total << "\n";
 }
-
