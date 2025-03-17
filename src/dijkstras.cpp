@@ -2,61 +2,71 @@
 
 struct Node {
     int vertex;
-    int distance;
+    int weight;
     
-    Node(int v, int d) : vertex(v), distance(d) {}
+    Node(int v, int w) : vertex(v), weight(w) {}
     
     bool operator>(const Node& other) const {
-        return distance > other.distance;
+        return weight > other.weight;
     }
 };
 
 vector<int> dijkstra_shortest_path(const Graph& G, int source, vector<int>& previous) {
     int n = G.numVertices;
-    vector<int> distances(n, INF);
+    vector<int> distance(n, INF);
     previous.resize(n, -1);
     vector<bool> visited(n, false);
     
-    // Priority queue for vertices
     priority_queue<Node, vector<Node>, greater<Node>> pq;
     
-    // Initialize source
-    distances[source] = 0;
     pq.push(Node(source, 0));
+    distance[source] = 0;
     
     while (!pq.empty()) {
-        int u = pq.top().vertex;
+        Node current = pq.top();
         pq.pop();
         
-        if (visited[u]) continue;
+        int u = current.vertex;
+        
+        if (visited[u]) {
+            continue;
+        }
         
         visited[u] = true;
         
-        // Check all adjacent vertices
         for (const Edge& edge : G[u]) {
             int v = edge.dst;
             int weight = edge.weight;
             
-            if (!visited[v] && distances[u] != INF && 
-                distances[u] + weight < distances[v]) {
-                distances[v] = distances[u] + weight;
+            if (!visited[v] && distance[u] != INF && distance[u] + weight < distance[v]) {
+                distance[v] = distance[u] + weight;
                 previous[v] = u;
-                pq.push(Node(v, distances[v]));
+                pq.push(Node(v, distance[v]));
             }
         }
     }
     
-    return distances;
+    return distance;
 }
 
 vector<int> extract_shortest_path(const vector<int>& distances, const vector<int>& previous, int destination) {
+    vector<int> path;
+    
     if (distances[destination] == INF) {
-        return vector<int>();
+        return path;
     }
     
-    vector<int> path;
-    for (int v = destination; v != -1; v = previous[v]) {
-        path.push_back(v);
+    // Build path from destination to source
+    for (int at = destination; at != -1 && distances[at] != 0; at = previous[at]) {
+        path.push_back(at);
+    }
+    
+    // Add source vertex
+    for (size_t i = 0; i < distances.size(); i++) {
+        if (distances[i] == 0) {
+            path.push_back(i);
+            break;
+        }
     }
     
     reverse(path.begin(), path.end());
@@ -64,22 +74,18 @@ vector<int> extract_shortest_path(const vector<int>& distances, const vector<int
 }
 
 void print_path(const vector<int>& path, int total) {
-    if (total == INF) {
-        cout << "No path exists\n";
+    if (path.empty()) {
+        cout << endl;
+        cout << "Total cost is " << total << endl;
         return;
     }
     
-    if (!path.empty()) {
-        for (size_t i = 0; i < path.size(); i++) {
-            cout << path[i];
-            if (i < path.size() - 1) {
-                cout << " ";
-            }
+    for (size_t i = 0; i < path.size(); ++i) {
+        cout << path[i];
+        if (i < path.size() - 1) {
+            cout << " ";
         }
-        cout << " \n";
-    } else {
-        cout << "\n";
     }
-    
-    cout << "Total cost is " << total << "\n";
+    cout << " " << endl;
+    cout << "Total cost is " << total << endl;
 }
